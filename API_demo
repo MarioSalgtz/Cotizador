@@ -1,0 +1,467 @@
+from flask import Flask, request, jsonify
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+import time
+
+app = Flask(__name__)
+
+@app.route("/Cotizacion", methods=['POST'])
+def get_Cotizacion():
+    data = request.json
+    zip_origen = data.get('zip_origen')
+    zip_destino = data.get('zip_destino') 
+    peso_kg = data.get('peso_kg')
+    Largo = data.get('Largo')
+    Ancho = data.get('Ancho')
+    Alto = data.get('Alto')
+
+    # 99 ------------------------------------------------------------------------------------------------------------   
+    options = webdriver.ChromeOptions()
+    options.add_argument('headless')
+    options.add_argument('--disable-gpu')
+    options.add_argument('--no-sandbox')
+    
+    driver = webdriver.Chrome(options=options)
+
+    driver.get("https://enviaya.com.mx/es/paqueterias/99minutos/")
+
+    time.sleep(5)
+
+    input_field_from = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "quote_from")))
+    input_field_from.send_keys(zip_origen)
+    time.sleep(2)
+    input_field_from.send_keys(Keys.ARROW_DOWN, Keys.RETURN)
+
+    input_field_to = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "quote_to")))
+    input_field_to.send_keys(zip_destino)
+    time.sleep(2)
+    input_field_to.send_keys(Keys.ARROW_DOWN, Keys.RETURN)
+
+    package_option = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.XPATH, "//label[@for='shipping-22']")))
+    package_option.click()
+    time.sleep(2)
+
+    length_field = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.NAME, "shipment[parcels][0][length]")))
+    length_field.send_keys(Largo)
+
+    width_field = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.NAME, "shipment[parcels][0][width]")))
+    width_field.send_keys(Ancho)
+
+    height_field = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.NAME, "shipment[parcels][0][height]")))
+    height_field.send_keys(Alto)
+
+    weight_input = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.NAME, "shipment[parcels][0][weight]")))
+    weight_input.send_keys(peso_kg)
+    time.sleep(2)
+
+    weight_input.send_keys(Keys.RETURN)
+
+    quote_price_99 = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, "span.rate-board-item__price")))
+    price_text_99 = quote_price_99.text
+
+    price_99 = price_text_99.split(" ")[-1]
+    driver.quit()
+
+    delivery_time = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, "span.rate-board-item__time-hrs")))
+    delivery_99 = delivery_time.text.strip("()")
+
+    # EXPRESS ------------------------------------------------------------------------------------------------------------    
+    options = webdriver.ChromeOptions()
+    options.add_argument('headless')
+    options.add_argument('--disable-gpu')
+    options.add_argument('--no-sandbox')
+
+    driver = webdriver.Chrome(options=options)      
+
+    driver.get("https://enviaya.com.mx/es/paqueterias/paquetexpress/")
+
+    input_field_from = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "quote_from")))
+    input_field_from.send_keys(zip_origen)
+    time.sleep(2)
+    input_field_from.send_keys(Keys.ARROW_DOWN, Keys.RETURN)
+
+    input_field_to = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "quote_to")))
+    input_field_to.send_keys(zip_destino)
+    time.sleep(2)
+    input_field_to.send_keys(Keys.ARROW_DOWN, Keys.RETURN)
+
+    package_option = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.XPATH, "//label[@for='shipping-22']")))
+    package_option.click()
+    time.sleep(2)
+
+    length_field = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.NAME, "shipment[parcels][0][length]")))
+    length_field.send_keys(Largo)
+
+    width_field = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.NAME, "shipment[parcels][0][width]")))
+    width_field.send_keys(Ancho)
+
+    height_field = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.NAME, "shipment[parcels][0][height]")))
+    height_field.send_keys(Alto)
+
+    weight_input = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.NAME, "shipment[parcels][0][weight]")))
+    weight_input.send_keys(peso_kg)
+    time.sleep(2)
+    weight_input.send_keys(Keys.RETURN)
+
+    quote_price_express = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, "span.rate-board-item__price")))
+    price_text_express = quote_price_express.text
+    price_express = price_text_express.split(" ")[-1]
+
+    delivery_time = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, "span.rate-board-item__time-hrs")))
+    delivery_express = delivery_time.text.strip("()")
+
+    driver.quit()
+
+    # TRES GUERRAS ------------------------------------------------------------------------------------------------------------
+    options = webdriver.ChromeOptions()
+    options.add_argument('headless')
+    options.add_argument('--disable-gpu')
+    options.add_argument('--no-sandbox')
+    
+    driver = webdriver.Chrome(options=options)
+
+    driver.get("https://enviaya.com.mx/es/paqueterias/tresguerras/")
+
+    input_field_from = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "quote_from")))
+    input_field_from.send_keys(zip_origen)
+    time.sleep(2)
+    input_field_from.send_keys(Keys.ARROW_DOWN, Keys.RETURN)
+
+    input_field_to = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "quote_to")))
+    input_field_to.send_keys(zip_destino)
+    time.sleep(2)
+    input_field_to.send_keys(Keys.ARROW_DOWN, Keys.RETURN)
+
+    package_option = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.XPATH, "//label[@for='shipping-22']")))
+    package_option.click()
+    time.sleep(2)
+
+    length_field = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.NAME, "shipment[parcels][0][length]")))
+    length_field.send_keys(Largo)
+
+    width_field = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.NAME, "shipment[parcels][0][width]")))
+    width_field.send_keys(Ancho)
+
+    height_field = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.NAME, "shipment[parcels][0][height]")))
+    height_field.send_keys(Alto)
+
+    weight_input = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.NAME, "shipment[parcels][0][weight]")))
+    weight_input.send_keys(peso_kg)
+    time.sleep(2)
+    weight_input.send_keys(Keys.RETURN)
+
+    quote_price_tres = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, "span.rate-board-item__price")))
+    price_text_tres = quote_price_tres.text
+    price_tres = price_text_tres.split(" ")[-1]
+
+    delivery_time = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, "span.rate-board-item__time-hrs")))
+    delivery_tres = delivery_time.text.strip("()")
+
+    driver.quit()
+
+    # REDPACK ------------------------------------------------------------------------------------------------------------
+    options = webdriver.ChromeOptions()
+    options.add_argument('headless')
+    options.add_argument('--disable-gpu')
+    options.add_argument('--no-sandbox')
+
+    driver = webdriver.Chrome(options=options)
+
+    driver.get("https://enviaya.com.mx/es/paqueterias/redpack/")
+
+    input_field_from = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "quote_from")))
+    input_field_from.send_keys(zip_origen)
+    time.sleep(2)
+    input_field_from.send_keys(Keys.ARROW_DOWN, Keys.RETURN)
+
+    input_field_to = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "quote_to")))
+    input_field_to.send_keys(zip_destino)
+    time.sleep(2)
+    input_field_to.send_keys(Keys.ARROW_DOWN, Keys.RETURN)
+
+    package_option = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.XPATH, "//label[@for='shipping-22']")))
+    package_option.click()
+    time.sleep(2)
+
+    length_field = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.NAME, "shipment[parcels][0][length]")))
+    length_field.send_keys(Largo)
+
+    width_field = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.NAME, "shipment[parcels][0][width]")))
+    width_field.send_keys(Ancho)
+
+    height_field = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.NAME, "shipment[parcels][0][height]")))
+    height_field.send_keys(Alto)
+
+    weight_input = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.NAME, "shipment[parcels][0][weight]")))
+    weight_input.send_keys(peso_kg)
+    time.sleep(2)
+    weight_input.send_keys(Keys.RETURN)
+
+    quote_price_red = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, "span.rate-board-item__price")))
+    price_text_red = quote_price_red.text
+    price_red = price_text_red.split(" ")[-1]
+
+    delivery_time = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, "span.rate-board-item__time-hrs")))
+    delivery_red = delivery_time.text.strip("()")
+
+    driver.quit()
+
+    # UPS ------------------------------------------------------------------------------------------------------------
+    options = webdriver.ChromeOptions()
+    options.add_argument('headless')
+    options.add_argument('--disable-gpu')
+    options.add_argument('--no-sandbox')
+   
+    driver = webdriver.Chrome(options=options)
+
+    driver.get("https://enviaya.com.mx/es/paqueterias/ups/")
+
+    input_field_from = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "quote_from")))
+    input_field_from.send_keys(zip_origen)
+    time.sleep(2)
+    input_field_from.send_keys(Keys.ARROW_DOWN, Keys.RETURN)
+
+    input_field_to = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "quote_to")))
+    input_field_to.send_keys(zip_destino)
+    time.sleep(2)
+    input_field_to.send_keys(Keys.ARROW_DOWN, Keys.RETURN)
+
+    package_option = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.XPATH, "//label[@for='shipping-22']")))
+    package_option.click()
+    time.sleep(2)
+
+    length_field = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.NAME, "shipment[parcels][0][length]")))
+    length_field.send_keys(Largo)
+
+    width_field = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.NAME, "shipment[parcels][0][width]")))
+    width_field.send_keys(Ancho)
+
+    height_field = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.NAME, "shipment[parcels][0][height]")))
+    height_field.send_keys(Alto)
+
+    weight_input = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.NAME, "shipment[parcels][0][weight]")))
+    weight_input.send_keys(peso_kg)
+    time.sleep(2)
+
+    weight_input.send_keys(Keys.RETURN)
+
+    quote_price_ups = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, "span.rate-board-item__price")))
+    price_text_ups = quote_price_ups.text
+    price_ups = price_text_ups.split(" ")[-1]
+
+    delivery_time = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, "span.rate-board-item__time-hrs")))
+    delivery_ups = delivery_time.text.strip("()")
+
+    driver.quit()
+
+    # FEDEX ------------------------------------------------------------------------------------------------------------
+    url = "https://www.fedex.com/es-mx/home.html#"
+
+    options = Options()
+    options.add_argument("--disable-blink-features=AutomationControlled")
+    options.add_argument("--disable-notifications")
+
+    driver = webdriver.Chrome(options=options)
+
+    driver.minimize_window() # Minimizar la ventana del navegador
+
+    driver.get(url)
+
+    button = WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.CSS_SELECTOR, ".fxg-cube__content")))
+    button.click()
+
+    input_field = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "fromGoogleAddress")))
+    input_field.send_keys(zip_origen)
+    time.sleep(2)
+    input_field.send_keys(Keys.ARROW_DOWN, Keys.RETURN)
+
+    time.sleep(2)
+
+    input_field2 = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "toGoogleAddress")))
+    input_field2.send_keys(zip_destino)
+    time.sleep(2)
+    input_field2.send_keys(Keys.ARROW_DOWN, Keys.RETURN)
+    time.sleep(2)
+
+    weight_field = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "package-details__weight-0")))
+    weight_field.send_keys(peso_kg)
+
+    length_field = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, '[formcontrolname="length"]')))
+    length_field.send_keys(Largo)
+
+    width_field = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, '[formcontrolname="width"]')))
+    width_field.send_keys(Ancho)
+
+    height_field = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, '[formcontrolname="height"]')))
+    height_field.send_keys(Alto)
+
+    submit_button = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "e2ePackageDetailsSubmitButtonRates")))
+    submit_button.submit()
+
+    price_button = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, ".magr-c-rates__button")))
+    
+    # Extraer Precio
+    price_FEDEX = price_button.text
+
+    delivery_info = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, ".fdx-c-definitionlist__description.fdx-u-font-size--h6.fdx-u-text--light")))
+    delivery_fedex = delivery_info.text.strip("()")
+    delivery_days = delivery_fedex.split(" ")[0]
+
+    driver.quit()
+
+    # ESTAFETA ------------------------------------------------------------------------------------------------------------
+    options = webdriver.ChromeOptions()
+    options.add_argument('headless') # Correr en segundo plano
+    options.add_argument('--disable-gpu')
+    options.add_argument('--no-sandbox')
+
+    driver = webdriver.Chrome(options=options)
+
+    driver.get("https://enviaya.com.mx/es/paqueterias/estafeta/cotizador/?utm_campaign=686904761&utm_source=bing&utm_medium=cpc&utm_content=&utm_term=estafeta%20cotizador&adgroupid=1276534639665967&network=o&device=c&adposition=?matchtype=e&placement=&msclkid=a03a2bc381271bfa19d44dd3c843596b")
+
+    time.sleep(5)
+
+    input_field_from = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "quote_from")))
+    input_field_from.send_keys(zip_origen)
+    time.sleep(2)
+    input_field_from.send_keys(Keys.ARROW_DOWN, Keys.RETURN)
+    time.sleep(2)
+
+    input_field_to = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "quote_to")))
+    input_field_to.send_keys(zip_destino)
+    time.sleep(2)
+    input_field_to.send_keys(Keys.ARROW_DOWN, Keys.RETURN)
+    time.sleep(2)
+
+    # Selecciona la opción "Paquete"
+    package_option = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.XPATH, "//label[@for='shipping-2']")))
+    package_option.click()
+
+    time.sleep(2)
+
+    length_field = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.NAME, "shipment[parcels][0][length]")))
+    length_field.send_keys(Largo)
+
+    width_field = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.NAME, "shipment[parcels][0][width]")))
+    width_field.send_keys(Ancho)
+
+    height_field = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.NAME, "shipment[parcels][0][height]")))
+    height_field.send_keys(Alto)
+
+    weight_field = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.NAME, "shipment[parcels][0][weight]")))
+    weight_field.send_keys(peso_kg)
+    time.sleep(2)
+
+    submit_button = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, "button[type='submit']")))
+    submit_button.click()
+    time.sleep(5)
+
+    quote_price = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, "span.rate-board-item__price")))
+    price_text = quote_price.text
+
+    # Extraer el precio de ESTAFETA
+    price_ESTAFETA = price_text.split(" ")[-1]
+
+    delivery_time = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, "span.rate-board-item__time-hrs")))
+    delivery_estafeta = delivery_time.text.strip("()")
+
+    driver.quit()
+
+    # DHL ------------------------------------------------------------------------------------------------------------
+    url = "https://www.dhl.com/mx-es/home/obtener-una-cotizacion.html"
+
+    options = Options()
+    options.add_argument("--disable-blink-features=AutomationControlled")
+
+    driver = webdriver.Chrome(options=options)
+
+    driver.get(url)
+    time.sleep(5)
+
+    button = WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.ID, "onetrust-accept-btn-handler")))
+    button.click()
+
+    input_field = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "originZip")))
+    input_field.send_keys(zip_origen)
+    time.sleep(5)
+    input_field.send_keys(Keys.ARROW_DOWN, Keys.RETURN)
+    time.sleep(5)
+
+    input_field2 = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "destinationZip")))
+    input_field2.send_keys(zip_destino)
+    time.sleep(5)
+    input_field2.send_keys(Keys.ARROW_DOWN, Keys.RETURN)
+    time.sleep(5)
+
+    input_field2.send_keys(Keys.ENTER)
+    time.sleep(2)
+
+    weight_field = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "weight-0")))
+    weight_field.send_keys(peso_kg)
+
+    length_field = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "length-0")))
+    length_field.send_keys(Largo)
+
+    width_field = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "width-0")))
+    width_field.send_keys(Ancho)
+
+    height_field = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "height-0")))
+    height_field.send_keys(Alto)
+    time.sleep(2)
+
+    quote_button = WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.XPATH, '//button[@data-testid="get-a-quote-button"]')))
+    quote_button.submit()
+    time.sleep(15)
+
+    # Extraer el precio de DHL
+    price_element = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.XPATH, '//p[@data-testid="offer-price"]')))
+    price_DHL = price_element.text.split(" ")[1]
+
+    delivery_element = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.XPATH, '//p[@class="styled__headlineStyles-sc-18g9jku-0-p jqogyx styled__DeliveryDateHeadline-sc-1tmeq25-3 gfSUnk horizontal-card-headline L4"]')))
+    delivery_dhl = delivery_element.text
+
+    driver.quit()
+
+    # Imprimir los precios
+    return jsonify(
+        {
+            "DHL": {
+                "precio": price_DHL,
+                "entrega_estimada": delivery_dhl,
+            },
+            "UPS": {
+                "precio": price_ups,
+                "entrega_estimada": delivery_ups,
+            },
+            "99Minutos": {
+                "precio": price_99,
+                "entrega_estimada": delivery_99,
+            },
+            "Fedex": {
+                "precio": price_FEDEX,
+                "entrega_estimada": delivery_fedex,
+            },
+            "Estafeta": {
+                "precio": price_ESTAFETA,
+                "entrega_estimada": delivery_estafeta,
+            },
+            "Redpack": {
+                "precio": price_red,
+                "entrega_estimada": delivery_red,
+            },
+            "TresGuerras": {
+                "precio": price_tres,
+                "entrega_estimada": delivery_tres,
+            },
+            "PaqueteExpress": {
+                "precio": price_express,
+                "entrega_estimada": delivery_express,
+            }
+        }
+    )
+if __name__ == "__main__":
+    app.run(debug=True)
