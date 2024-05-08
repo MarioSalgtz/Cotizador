@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask import send_file
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.keys import Keys
@@ -68,11 +69,10 @@ def get_99():
         driver.quit()
 
         return jsonify({
-            "99Minutos": {
-                "precio": "$" + price_99,
-                "entrega_estimada": delivery_99,
-                "imagen_logo": "https://guiapaqueteria.com/wp-content/uploads/2018/06/99-Minutos-Logo-GuiaPaq-e1529691248291.jpg"
-            }
+            "paqueteria": "99 Minutos",
+            "precio": "$" + price_99,
+            "entrega_estimada": delivery_99,
+            "imagen_logo": "https://guiapaqueteria.com/wp-content/uploads/2018/06/99-Minutos-Logo-GuiaPaq-e1529691248291.jpg"
         })
 
     except Exception as e:
@@ -136,16 +136,13 @@ def get_Express():
 
         driver.quit()
 
-        return jsonify(
-            {
-                "PaqueteExpress": {
-                    "precio": "$" + price_express,
-                    "entrega_estimada": delivery_express,
-                    "imagen_logo": "https://www.logotypes101.com/logos/686/033FF03C7016CA242A0D61A8A3072AAD/paquetexpress.png"
+        return jsonify({
+            "paqueteria": "Paquetexpress",
+            "precio": "$" + price_express,
+            "entrega_estimada": delivery_express,
+            "imagen_logo": "https://www.logotypes101.com/logos/686/033FF03C7016CA242A0D61A8A3072AAD/paquetexpress.png"   
+        })
 
-                }
-            }
-        )
     except Exception as e:
         driver.quit()
         return jsonify({"error": str(e)}), 500
@@ -207,15 +204,13 @@ def get_Tres():
 
         driver.quit()
 
-        return jsonify(
-            {
-                "TresGuerras": {
-                    "precio": price_tres,
-                    "entrega_estimada": delivery_tres,
-                    "imagen_logo": "https://www.tresguerras.com.mx/3G/img/logo3.png"
-                }
-            }
-        )
+        return jsonify({
+            "paqueteria": "Tres Guerras",
+            "precio": price_tres,
+            "entrega_estimada": delivery_tres,
+            "imagen_logo": "https://www.tresguerras.com.mx/3G/img/logo3.png"
+        })
+    
     except Exception as e:
         driver.quit()
         return jsonify({"error": str(e)}), 500
@@ -275,15 +270,12 @@ def get_Red():
 
     driver.quit()
 
-    return jsonify(
-        {
-            "REDPACK": {
-                "precio": price_red,
-                "entrega_estimada": delivery_red,
-                "imagen_logo": "https://webqa.redpack.com.mx/wp-content/uploads/2021/06/logored.png"
-            }
-        }
-    )
+    return jsonify({
+        "paqueteria": "Redpack",
+        "precio": price_red,
+        "entrega_estimada": delivery_red,
+        "imagen_logo": "https://webqa.redpack.com.mx/wp-content/uploads/2021/06/logored.png"       
+    })
 
 # UPS ------------------------------------------------------------------------------------------------------------
 @app.route("/ups", methods=['POST'])
@@ -341,15 +333,12 @@ def get_UPS():
 
     driver.quit()
 
-    return jsonify(
-        {
-            "UPS": {
-                "precio": "$" + price_ups,
-                "entrega_estimada": delivery_ups,
-                "imagen_logo": "https://logodownload.org/wp-content/uploads/2014/04/ups-logo-0.png"
-            }
-        }
-    )
+    return jsonify({
+        "paqueteria": "UPS",
+        "precio": "$" + price_ups,
+        "entrega_estimada": delivery_ups,
+        "imagen_logo": "https://logodownload.org/wp-content/uploads/2014/04/ups-logo-0.png"
+    })
 
 # FEDEX ------------------------------------------------------------------------------------------------------------
 @app.route("/fedex", methods=['POST'])
@@ -414,15 +403,12 @@ def get_FEDEX():
 
     driver.quit()
 
-    return jsonify(
-        {
-            "FEDEX": {
-                "precio": price_FEDEX,
-                "entrega_estimada": delivery_fedex,
-                "imagen_logo": "https://static.vecteezy.com/system/resources/previews/022/101/032/non_2x/fedex-logo-transparent-free-png.png"
-            }
-        }
-    )
+    return jsonify({
+        "paqueteria": "Fedex", 
+        "precio": price_FEDEX,
+        "entrega_estimada": delivery_fedex,
+        "imagen_logo": "https://static.vecteezy.com/system/resources/previews/022/101/032/non_2x/fedex-logo-transparent-free-png.png"
+    })
 
 # ESTAFETA ------------------------------------------------------------------------------------------------------------
 @app.route("/estafeta", methods=['POST'])
@@ -483,15 +469,13 @@ def get_Estafeta():
 
         driver.quit()
 
-        return jsonify(
-            {
-                "Estafeta": {
-                    "precio": '$' + price_ESTAFETA,
-                    "entrega_estimada": delivery_estafeta,
-                    "imagen_logo": "https://www.logotypes101.com/logos/198/688260FAE2BD34C98FADB76D942DD3B6/Estafeta.png"
-                }
-            }
-        )
+        return jsonify({
+            "paqueteria": "Estafeta",
+            "precio": '$' + price_ESTAFETA,
+            "entrega_estimada": delivery_estafeta,
+            "imagen_logo": "https://www.logotypes101.com/logos/198/688260FAE2BD34C98FADB76D942DD3B6/Estafeta.png"
+        })
+    
     except Exception as e:
         driver.quit()
         return jsonify({"error": str(e)}), 500
@@ -557,15 +541,12 @@ def get_DHL():
 
     driver.quit()
 
-    return jsonify(
-        {
-            "DHL": {
-                "precio": price_DHL,
-                "entrega_estimada": delivery_dhl,
-                "imagen_logo": "https://pixelbag.net/wp-content/uploads/2022/03/dhl-vector-logo-768x768.jpg"
-            }
-        }
-    )
+    return jsonify({
+        "paqueteria": "DHL",
+        "precio": price_DHL,
+        "entrega_estimada": delivery_dhl,
+        "imagen_logo": "https://pixelbag.net/wp-content/uploads/2022/03/dhl-vector-logo-768x768.jpg"
+    })
 
 if __name__ == "__main__":
     app.run(debug=True)
